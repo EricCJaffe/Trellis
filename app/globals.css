@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
-html, body {
-  height: 100%;
+:root {
+  --brand-primary: #eb462d;
+  --brand-secondary: #143637;
+  --brand-tertiary: #f2a035;
+  --bg-page: #fefbf9;
+  --bg-beige: #f9f5f0;
+  --text-primary: #0f1828;
+  --text-secondary: #344055;
 }
+
+html, body { height: 100%; }
+body { background-color: var(--bg-page); }

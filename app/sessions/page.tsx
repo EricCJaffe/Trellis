@@ -24,7 +24,7 @@ export default async function SessionsPage() {
           <h1 className="text-2xl font-bold text-gray-900">Sessions</h1>
           <p className="text-gray-500 text-sm mt-1">{sessions?.length ?? 0} total · {held.length} held · {planned.length} upcoming · {notHeld.length} not held</p>
         </div>
-        <button className="bg-[#2D1B69] text-white text-sm px-4 py-2 rounded-lg font-medium opacity-60 cursor-not-allowed">
+        <button className="bg-[#143637] text-white text-sm px-4 py-2 rounded-lg font-medium opacity-60 cursor-not-allowed">
           + Schedule Session <span className="text-xs ml-1 opacity-70">DEMO ONLY</span>
         </button>
       </div>

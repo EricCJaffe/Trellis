@@ -27,10 +27,10 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#2D1B69] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#143637] flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-sm">
         <div className="text-center mb-8">
-          <div className="text-2xl font-bold text-[#2D1B69] mb-1">Trellis</div>
+          <div className="text-2xl font-bold text-[#143637] mb-1">Trellis</div>
           <div className="text-gray-500 text-sm">Every Mother's Advocate</div>
           <div className="mt-3 inline-block bg-amber-100 text-amber-800 text-xs font-semibold px-3 py-1 rounded-full">
             ✦ Demo Environment
@@ -57,7 +57,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading || !password}
-            className="w-full bg-[#2D1B69] text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-purple-900 transition-colors disabled:opacity-50"
+            className="w-full bg-[#143637] text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-purple-900 transition-colors disabled:opacity-50"
           >
             {loading ? "Entering…" : "Enter Demo →"}
           </button>
