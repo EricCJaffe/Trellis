@@ -2,6 +2,7 @@ import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Phone, Mail, MapPin, Calendar, MessageSquare, Target, Heart } from "lucide-react";
+import AiSummaryPanel from "@/components/AiSummaryPanel";
 
 export default async function MomProfilePage({ params }: { params: { id: string } }) {
   const [{ data: mom }, { data: pairing }, { data: goals }, { data: sessions }] = await Promise.all([
@@ -39,7 +40,7 @@ export default async function MomProfilePage({ params }: { params: { id: string 
       .select(`
         id, name, status, session_type, date_start, location,
         users!sessions_assigned_user_id_fkey(first_name, last_name),
-        session_notes(status, note)
+        session_notes(id, status, note, ai_summary, ai_generated_at)
       `)
       .eq("mom_id", params.id)
       .eq("deleted_at", 0)
@@ -255,7 +256,7 @@ export default async function MomProfilePage({ params }: { params: { id: string 
                     NotHeld: "bg-red-50 text-red-700 border border-red-200",
                   };
                   return (
-                    <div key={s.id} className="border border-gray-100 rounded-lg p-4 hover:border-gray-200 transition-colors">
+                    <div key={s.id} className="border border-gray-100 rounded-xl p-4 hover:border-gray-200 transition-colors">
                       <div className="flex items-start justify-between mb-1">
                         <div>
                           <div className="text-sm font-medium text-gray-800">{s.name}</div>
@@ -270,9 +271,18 @@ export default async function MomProfilePage({ params }: { params: { id: string 
                         </span>
                       </div>
                       {note?.note && (
-                        <div className="mt-2 text-xs text-gray-500 bg-gray-50 rounded-md px-3 py-2 line-clamp-2">
-                          "{note.note}"
+                        <div className="mt-2 text-xs text-gray-500 bg-gray-50 rounded-md px-3 py-2">
+                          <p className="line-clamp-3 italic">"{note.note}"</p>
                         </div>
+                      )}
+                      {/* AI Analysis Panel — shows pre-seeded summary or on-demand generation */}
+                      {note && s.status === "Held" && (
+                        <AiSummaryPanel
+                          noteId={note.id}
+                          noteText={note.note ?? ""}
+                          existingSummary={note.ai_summary ?? null}
+                          existingGeneratedAt={note.ai_generated_at ?? null}
+                        />
                       )}
                     </div>
                   );
