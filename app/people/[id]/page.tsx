@@ -4,7 +4,9 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, Phone, Mail, MapPin, Calendar, MessageSquare, Target, Heart } from "lucide-react";
 import AiSummaryPanel from "@/components/AiSummaryPanel";
 
-export default async function MomProfilePage({ params }: { params: { id: string } }) {
+export default async function MomProfilePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+
   const [{ data: mom }, { data: pairing }, { data: goals }, { data: sessions }] = await Promise.all([
     supabase
       .from("moms")
@@ -16,7 +18,7 @@ export default async function MomProfilePage({ params }: { params: { id: string 
         affiliates(name),
         users!moms_assigned_user_id_fkey(id, first_name, last_name, email, phone_mobile)
       `)
-      .eq("id", params.id)
+      .eq("id", id)
       .single(),
     supabase
       .from("pairings")
@@ -25,14 +27,14 @@ export default async function MomProfilePage({ params }: { params: { id: string 
         tracks(title, description),
         users!pairings_advocate_id_fkey(id, first_name, last_name, email, phone_mobile, advocate_status)
       `)
-      .eq("mom_id", params.id)
+      .eq("mom_id", id)
       .eq("deleted_at", 0)
       .eq("status", "paired")
       .single(),
     supabase
       .from("goals")
       .select("id, title, status, category, due_date, completed_date")
-      .eq("mom_id", params.id)
+      .eq("mom_id", id)
       .eq("deleted_at", 0)
       .order("status"),
     supabase
@@ -42,7 +44,7 @@ export default async function MomProfilePage({ params }: { params: { id: string 
         users!sessions_assigned_user_id_fkey(first_name, last_name),
         session_notes(id, status, note, ai_summary, ai_generated_at)
       `)
-      .eq("mom_id", params.id)
+      .eq("mom_id", id)
       .eq("deleted_at", 0)
       .order("date_start", { ascending: false }),
   ]);
