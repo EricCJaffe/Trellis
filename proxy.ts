@@ -4,7 +4,7 @@ import type { NextRequest } from 'next/server'
 const DEMO_PASSWORD = 'ema2026'
 const COOKIE_NAME = 'trellis_demo_auth'
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Always allow: login page, auth API, static assets

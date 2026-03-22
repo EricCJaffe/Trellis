@@ -48,6 +48,9 @@ export default async function MomProfilePage({ params }: { params: { id: string 
 
   if (!mom) notFound();
 
+  // Supabase infers joined relations as arrays; cast to any for safe access
+  const momAny = mom as any;
+
   const programStatusLabel: Record<string, string> = {
     in_program_paired_with_advocate: "Paired with Advocate",
     in_program_waiting_to_be_paired_with_advocate: "Waiting for Advocate",
@@ -81,31 +84,31 @@ export default async function MomProfilePage({ params }: { params: { id: string 
       <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
         <div className="flex items-start gap-5">
           <div className="w-16 h-16 rounded-full flex items-center justify-center text-white text-xl font-bold flex-shrink-0" style={{ background: "#eb462d" }}>
-            {mom.first_name?.[0]}{mom.last_name?.[0]}
+            {momAny.first_name?.[0]}{momAny.last_name?.[0]}
           </div>
           <div className="flex-1">
             <div className="flex items-start justify-between">
               <div>
-                <h1 className="text-xl font-bold text-gray-900">{mom.first_name} {mom.last_name}</h1>
-                <div className="text-sm text-gray-400 mt-0.5">{mom.affiliates?.name}</div>
+                <h1 className="text-xl font-bold text-gray-900">{momAny.first_name} {momAny.last_name}</h1>
+                <div className="text-sm text-gray-400 mt-0.5">{momAny.affiliates?.name}</div>
               </div>
-              <span className={`text-xs px-3 py-1 rounded-full font-medium ${statusChipClass[mom.program_status ?? ""] ?? "bg-gray-100 text-gray-500 border border-gray-200"}`}>
-                {programStatusLabel[mom.program_status ?? ""] ?? mom.program_status}
+              <span className={`text-xs px-3 py-1 rounded-full font-medium ${statusChipClass[momAny.program_status ?? ""] ?? "bg-gray-100 text-gray-500 border border-gray-200"}`}>
+                {programStatusLabel[momAny.program_status ?? ""] ?? momAny.program_status}
               </span>
             </div>
             <div className="mt-3 flex flex-wrap gap-4 text-sm text-gray-500">
-              {mom.email1 && <span className="flex items-center gap-1.5"><Mail className="w-4 h-4 text-gray-400" />{mom.email1}</span>}
-              {mom.phone_other && <span className="flex items-center gap-1.5"><Phone className="w-4 h-4 text-gray-400" />{mom.phone_other}</span>}
-              {(mom.primary_address_city || mom.primary_address_state) && (
+              {momAny.email1 && <span className="flex items-center gap-1.5"><Mail className="w-4 h-4 text-gray-400" />{momAny.email1}</span>}
+              {momAny.phone_other && <span className="flex items-center gap-1.5"><Phone className="w-4 h-4 text-gray-400" />{momAny.phone_other}</span>}
+              {(momAny.primary_address_city || momAny.primary_address_state) && (
                 <span className="flex items-center gap-1.5">
                   <MapPin className="w-4 h-4 text-gray-400" />
-                  {[mom.primary_address_city, mom.primary_address_state].filter(Boolean).join(", ")}
+                  {[momAny.primary_address_city, momAny.primary_address_state].filter(Boolean).join(", ")}
                 </span>
               )}
-              {mom.date_entered && (
+              {momAny.date_entered && (
                 <span className="flex items-center gap-1.5">
                   <Calendar className="w-4 h-4 text-gray-400" />
-                  Enrolled {new Date(mom.date_entered).toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+                  Enrolled {new Date(momAny.date_entered).toLocaleDateString("en-US", { month: "long", year: "numeric" })}
                 </span>
               )}
             </div>
@@ -123,7 +126,7 @@ export default async function MomProfilePage({ params }: { params: { id: string 
             <div className="text-xs text-gray-400 mt-0.5">Goals Complete</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold" style={{ color: "#143637" }}>{mom.language_preference_c ?? "English"}</div>
+            <div className="text-2xl font-bold" style={{ color: "#143637" }}>{momAny.language_preference_c ?? "English"}</div>
             <div className="text-xs text-gray-400 mt-0.5">Language</div>
           </div>
         </div>
@@ -138,23 +141,23 @@ export default async function MomProfilePage({ params }: { params: { id: string 
               <Heart className="w-4 h-4" style={{ color: "#eb462d" }} /> Client Details
             </h2>
             <dl className="space-y-2.5 text-sm">
-              {mom.due_date_c && (
+              {momAny.due_date_c && (
                 <div className="flex justify-between">
                   <dt className="text-gray-400">Due Date</dt>
-                  <dd className="text-gray-700 font-medium">{new Date(mom.due_date_c).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</dd>
+                  <dd className="text-gray-700 font-medium">{new Date(momAny.due_date_c).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</dd>
                 </div>
               )}
-              {mom.number_of_kids_c != null && (
+              {momAny.number_of_kids_c != null && (
                 <div className="flex justify-between">
                   <dt className="text-gray-400">Children</dt>
-                  <dd className="text-gray-700 font-medium">{mom.number_of_kids_c}</dd>
+                  <dd className="text-gray-700 font-medium">{momAny.number_of_kids_c}</dd>
                 </div>
               )}
-              {mom.risk_level_c && (
+              {momAny.risk_level_c && (
                 <div className="flex justify-between">
                   <dt className="text-gray-400">Risk Level</dt>
-                  <dd className={`font-medium text-xs px-2 py-0.5 rounded-full ${mom.risk_level_c === "High" ? "bg-red-100 text-red-700" : mom.risk_level_c === "Medium" ? "bg-amber-100 text-amber-700" : "bg-green-100 text-green-700"}`}>
-                    {mom.risk_level_c}
+                  <dd className={`font-medium text-xs px-2 py-0.5 rounded-full ${momAny.risk_level_c === "High" ? "bg-red-100 text-red-700" : momAny.risk_level_c === "Medium" ? "bg-amber-100 text-amber-700" : "bg-green-100 text-green-700"}`}>
+                    {momAny.risk_level_c}
                   </dd>
                 </div>
               )}
@@ -162,16 +165,16 @@ export default async function MomProfilePage({ params }: { params: { id: string 
           </div>
 
           {/* Coordinator */}
-          {mom.users && (
+          {momAny.users && (
             <div className="bg-white rounded-xl border border-gray-200 p-5">
               <h2 className="font-semibold text-gray-800 text-sm mb-3">Coordinator</h2>
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-semibold flex-shrink-0" style={{ background: "#143637" }}>
-                  {(mom.users as any).first_name?.[0]}{(mom.users as any).last_name?.[0]}
+                  {(momAny.users as any).first_name?.[0]}{(momAny.users as any).last_name?.[0]}
                 </div>
                 <div>
-                  <div className="text-sm font-semibold text-gray-800">{(mom.users as any).first_name} {(mom.users as any).last_name}</div>
-                  <div className="text-xs text-gray-400">{(mom.users as any).email}</div>
+                  <div className="text-sm font-semibold text-gray-800">{(momAny.users as any).first_name} {(momAny.users as any).last_name}</div>
+                  <div className="text-xs text-gray-400">{(momAny.users as any).email}</div>
                 </div>
               </div>
             </div>
