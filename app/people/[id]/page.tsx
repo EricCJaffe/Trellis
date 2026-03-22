@@ -13,8 +13,8 @@ export default async function MomProfilePage({ params }: { params: Promise<{ id:
       .select(`
         id, first_name, last_name, email1, phone_other,
         status, program_status, primary_address_city, primary_address_state,
-        language_preference_c, date_entered, due_date_c, number_of_kids_c,
-        risk_level_c, emergency_contact_name_c, emergency_contact_phone_c,
+        language_preference_c, date_entered, pregnant_due_date, number_of_children_c,
+        birthdate, referral_type_c, currently_pregnant_c,
         affiliates(name),
         users!moms_assigned_user_id_fkey(id, first_name, last_name, email, phone_mobile)
       `)
@@ -144,24 +144,34 @@ export default async function MomProfilePage({ params }: { params: Promise<{ id:
               <Heart className="w-4 h-4" style={{ color: "#eb462d" }} /> Client Details
             </h2>
             <dl className="space-y-2.5 text-sm">
-              {momAny.due_date_c && (
+              {momAny.pregnant_due_date && (
                 <div className="flex justify-between">
                   <dt className="text-gray-400">Due Date</dt>
-                  <dd className="text-gray-700 font-medium">{new Date(momAny.due_date_c).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</dd>
+                  <dd className="text-gray-700 font-medium">{new Date(momAny.pregnant_due_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</dd>
                 </div>
               )}
-              {momAny.number_of_kids_c != null && (
+              {momAny.currently_pregnant_c != null && (
+                <div className="flex justify-between">
+                  <dt className="text-gray-400">Currently Pregnant</dt>
+                  <dd className="text-gray-700 font-medium">{momAny.currently_pregnant_c ? "Yes" : "No"}</dd>
+                </div>
+              )}
+              {momAny.number_of_children_c != null && (
                 <div className="flex justify-between">
                   <dt className="text-gray-400">Children</dt>
-                  <dd className="text-gray-700 font-medium">{momAny.number_of_kids_c}</dd>
+                  <dd className="text-gray-700 font-medium">{momAny.number_of_children_c}</dd>
                 </div>
               )}
-              {momAny.risk_level_c && (
+              {momAny.referral_type_c && (
                 <div className="flex justify-between">
-                  <dt className="text-gray-400">Risk Level</dt>
-                  <dd className={`font-medium text-xs px-2 py-0.5 rounded-full ${momAny.risk_level_c === "High" ? "bg-red-100 text-red-700" : momAny.risk_level_c === "Medium" ? "bg-amber-100 text-amber-700" : "bg-green-100 text-green-700"}`}>
-                    {momAny.risk_level_c}
-                  </dd>
+                  <dt className="text-gray-400">Referred By</dt>
+                  <dd className="text-gray-700 font-medium">{momAny.referral_type_c}</dd>
+                </div>
+              )}
+              {momAny.birthdate && (
+                <div className="flex justify-between">
+                  <dt className="text-gray-400">Date of Birth</dt>
+                  <dd className="text-gray-700 font-medium">{new Date(momAny.birthdate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</dd>
                 </div>
               )}
             </dl>
