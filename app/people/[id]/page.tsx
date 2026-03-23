@@ -41,13 +41,28 @@ export default async function MomProfilePage({ params }: { params: Promise<{ id:
       .from("sessions")
       .select(`
         id, name, status, session_type, date_start, location,
-        users!sessions_assigned_user_id_fkey(first_name, last_name),
-        session_notes(id, status, note, ai_summary, ai_generated_at)
+        users!sessions_assigned_user_id_fkey(first_name, last_name)
       `)
       .eq("mom_id", id)
       .eq("deleted_at", 0)
       .order("date_start", { ascending: false }),
   ]);
+
+  // Fetch session notes separately to avoid nested join issues
+  const sessionIds = (sessions ?? []).map((s: any) => s.id);
+  const { data: sessionNotes } = sessionIds.length > 0
+    ? await supabase
+        .from("session_notes")
+        .select("id, session_id, status, note, ai_summary, ai_generated_at")
+        .in("session_id", sessionIds)
+        .eq("deleted_at", 0)
+    : { data: [] };
+
+  // Build a map of session_id → note
+  const noteBySessionId: Record<string, any> = {};
+  for (const n of (sessionNotes ?? [])) {
+    noteBySessionId[(n as any).session_id] = n;
+  }
 
   if (!mom) notFound();
 
@@ -261,7 +276,7 @@ export default async function MomProfilePage({ params }: { params: Promise<{ id:
             ) : (
               <div className="space-y-3">
                 {(sessions ?? []).map((s: any) => {
-                  const note = s.session_notes?.[0];
+                  const note = noteBySessionId[s.id];
                   const statusColors: Record<string, string> = {
                     Held: "bg-emerald-50 text-emerald-700 border border-emerald-200",
                     Planned: "bg-blue-50 text-blue-700 border border-blue-200",
